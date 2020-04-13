@@ -51,7 +51,7 @@ eureka:
     enableSelfPreservation: true
   instance:
     appname: ${spring.application.name}
-    hostname: ${spring.cloud.client.hostname}
+    hostname: <%= spec.address %>
     preferIpAddress: true
   client:  # Standalone mode (not a client, don't register with itself)
     registerWithEureka: false
