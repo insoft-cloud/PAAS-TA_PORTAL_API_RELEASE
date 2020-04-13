@@ -1,5 +1,5 @@
 ---
-name: paasta-portal-api                      # 서비스 배포이름(필수) bosh deployments 로 확인 가능한 이름
+name: ((portal_deployment_name))                      # 서비스 배포이름(필수) bosh deployments 로 확인 가능한 이름
 
 stemcells:
 - alias: ((stemcell_alias))
@@ -11,7 +11,11 @@ stemcells:
 
 releases:
 - name: "((releases_name))"                   # 서비스 릴리즈 이름(필수) bosh releases로 확인 가능
-  version: latest                                              # 서비스 릴리즈 버전(필수):latest 시 업로드된 서비스 릴리즈 최신버전
+  version: "2.0"                                              # 서비스 릴리즈 버전(필수):latest 시 업로드된 서비스 릴리즈 최신버전
+- name: bosh-dns-aliases
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh-dns-aliases-release?v=0.0.3
+  version: 0.0.3
+  sha1: b0d0a0350ed87f1ded58b2ebb469acea0e026ccc
 
 update:
   canaries: 1                                               # canary 인스턴스 수(필수)
@@ -19,6 +23,13 @@ update:
   update_watch_time: 5000-120000                            # non-canary 인스턴스가 수행하기 위한 대기 시간(필수)
   max_in_flight: 1                                          # non-canary 인스턴스가 병렬로 update 하는 최대 개수(필수)
   serial: false
+addons:
+- name: bosh-dns-aliases
+  jobs:
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
 
 instance_groups:
 ########## INFRA ##########
@@ -44,8 +55,6 @@ instance_groups:
   stemcell: "((stemcell_alias))"
   networks:
   - name: ((internal_networks_name))
-  - name: ((external_networks_name))
-    static_ips: ((haproxy_public_ip))
   jobs:
   - name: haproxy
     release: "((releases_name))"
@@ -125,8 +134,8 @@ instance_groups:
     cloudfoundry:
       cc:
         api:
-          url: ((cf_api_url))
-          uaaUrl: ((cf_uaa_url))
+          url: https://api.((paasta_domain))
+          uaaUrl: https://uaa.((paasta_domain))
           sslSkipValidation: true
       user: # CloudFoundry Login information
         admin:
@@ -166,8 +175,8 @@ instance_groups:
     java_opts: "-Xmx450m -Xss1M -XX:MaxMetaspaceSize=93382K -XX:ReservedCodeCacheSize=240m -XX:+UseCompressedOops -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 -XX:+UseConcMarkSweepGC -XX:SoftRefLRUPolicyMSPerMB=50 -Dsun.io.useCanonCaches=false -Djava.net.preferIPv4Stack=true -XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -Xverify:none -XX:ErrorFile=/var/vcap/sys/log/java_error_in_idea_%p.log -XX:HeapDumpPath=/var/vcap/sys/log/java_error_in_idea.hprof"
     datasource:
       cc:
-        driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://((cf_db_ips)):((cf_db_port))/cloud_controller
+        driver-class-name: com.mysql.jdbc.Driver                         #org.postgresql.Driver
+        url: jdbc:mysql://sql-db.service.cf.internal:3306/cloud_controller  #jdbc:postgresql://((cf_db_ips)):((cf_db_port))/cloud_controller
         username: "((cc_db_id))"
         password: "((cc_db_password))"
       portal:
@@ -175,8 +184,8 @@ instance_groups:
         username: root
         password: "((mariadb_user_password))"
       uaa:
-        driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://((cf_db_ips)):((cf_db_port))/uaa
+        driver-class-name: com.mysql.jdbc.Driver                         #org.postgresql.Driver
+        url: jdbc:mysql://sql-db.service.cf.internal:3306/uaa               # jdbc:postgresql://((cf_db_ips)):((cf_db_port))/uaa
         username: "((uaa_db_id))"
         password: "((uaa_db_password))"
     mail:
@@ -246,8 +255,8 @@ instance_groups:
     cloudfoundry:
       cc:
         api:
-          url: ((cf_api_url))
-          uaaUrl: ((cf_uaa_url))
+          url: api.((paasta_domain))
+          uaaUrl: uaa.((paasta_domain))
           sslSkipValidation: true
       user: # CloudFoundry Login information
         admin:

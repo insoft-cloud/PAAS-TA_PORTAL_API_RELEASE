@@ -1,0 +1,63 @@
+#release setting 
+releases_name: "paasta-portal-api-release"
+
+#stemcell setting
+stemcell_os: "ubuntu-xenial"
+stemcell_version: "latest"
+stemcell_alias: "default"
+
+#paasta dependency
+paasta_deployment_name: "paasta"
+paasta_network_name: "paasta"
+paasta_public_haproxy_network_name: " paasta-haproxy"
+paasta_domain: "172.30.50.4.xip.io"
+cc_db_id: "cloud_controller"
+cc_db_password: "cc_admin"
+uaa_db_id: "uaa"
+uaa_db_password: "uaa_admin"
+
+#network setting
+internal_networks_name: "portal"
+external_networks_name: "portal"    #use-haproxy-public options....
+haproxy_public_ip: "172.30.255.31"  #haproxy-public ip
+
+#flavor setting
+vm_type_tiny: "small"
+vm_type_small: "portal_small"
+vm_type_medium: "portal_medium"
+
+#portal database setting
+mariadb_disk_type: "10GB"
+mariadb_port: "3306"
+mariadb_user_password: "Paasta@2019"
+
+#portal storage setting
+binary_storage_disk_type: "10GB"
+binary_storage_username: "paasta-portal"
+binary_storage_password: "paasta"
+binary_storage_tenantname: "paasta-portal"
+binary_storage_email: "paasta@paasta.com"
+
+#cloudfoundry setting
+cf_admin_password: "admin"
+cf_uaa_admin_client_secret: "admin-secret"
+
+#user portal, abacus, paasta-monitoring setting
+paas_ta_web_user_url: "http://portal-web-user.172.30.255.30.xip.io"
+abacus_url: "http://abacus.111.111.111.111.xip.io"
+monitoring_api_url: "http://http://172.30.50.5:8080"
+
+#mail smtp setting
+mail_smtp_host: "smtp.gmail.com"
+mail_smtp_port: "465"
+mail_smtp_username: "smtp_user_name"
+mail_smtp_password: "smtp_password"
+mail_smtp_useremail: "smtp_usermail@gmail.com"
+mail_smtp_properties_auth: "true"
+mail_smtp_properties_starttls_enable: "true"
+mail_smtp_properties_starttls_required: "true"
+mail_smtp_properties_subject: "PaaS-TA User Potal"
+
+#spirng admin setting(not true)
+infra_admin: false
+
